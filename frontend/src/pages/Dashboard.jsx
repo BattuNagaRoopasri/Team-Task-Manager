@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { PlusCircle, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { PlusCircle, Clock, CheckCircle2, AlertCircle, LayoutDashboard } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -139,8 +139,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
-// Need to import LayoutDashboard at top, adding here to fix build
-import { LayoutDashboard } from 'lucide-react';
 
 export default Dashboard;
