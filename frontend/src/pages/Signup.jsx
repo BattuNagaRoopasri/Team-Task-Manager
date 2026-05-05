@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+
+const API = import.meta.env.VITE_API_URL;
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -15,7 +16,7 @@ const Signup = () => {
     setError('');
 
     try {
-      const res = await fetch('https://adorable-caring-production-3038.up.railway.app/api/auth/register', {
+      const res = await fetch(`${API}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, role })
@@ -24,84 +25,36 @@ const Signup = () => {
       const data = await res.json();
 
       if (res.ok) {
-        // Automatically redirect to login after successful signup
         navigate('/login');
       } else {
         setError(data.message || 'Failed to create account');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError('Server not reachable. Check backend.');
     }
   };
 
   return (
-    <div className="flex justify-center items-center animate-fade-in" style={{ minHeight: '70vh' }}>
+    <div className="flex justify-center items-center" style={{ minHeight: '70vh' }}>
       <div className="glass-panel" style={{ width: '100%', maxWidth: '450px', padding: '2.5rem' }}>
-        <div className="text-center mb-4">
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Create an Account</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Join your team and start managing tasks</p>
-        </div>
+        <h2>Create an Account</h2>
 
-        {error && <div style={{ padding: '0.75rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '0.5rem', marginBottom: '1rem', border: '1px solid rgba(239, 68, 68, 0.2)' }}>{error}</div>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label htmlFor="name">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              className="input-field"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              placeholder="John Doe"
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              className="input-field"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="you@example.com"
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              className="input-field"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              minLength="6"
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="role">Role</label>
-            <select
-              id="role"
-              className="input-field"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="MEMBER">Member (Join Teams)</option>
-              <option value="ADMIN">Admin (Manage Projects)</option>
-            </select>
-          </div>
-          <button type="submit" className="btn btn-primary w-full" style={{ marginTop: '1rem' }}>
-            Create Account
-          </button>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder="Name" required />
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" required />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required />
+
+          <select value={role} onChange={e => setRole(e.target.value)}>
+            <option value="MEMBER">Member</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+
+          <button type="submit">Create Account</button>
         </form>
 
-        <p className="text-center mt-4" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-          Already have an account? <Link to="/login" style={{ fontWeight: '500' }}>Sign in</Link>
-        </p>
+        <Link to="/login">Login</Link>
       </div>
     </div>
   );
