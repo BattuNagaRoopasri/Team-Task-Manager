@@ -15,7 +15,7 @@ const Dashboard = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         // We fetch tasks, and projects can be fetched similarly
-        const taskRes = await fetch('/api/tasks', { headers });
+        const taskRes = await fetch('https://adorable-caring-production-3038.up.railway.app/api/tasks', { headers });
         if (taskRes.ok) {
           const taskData = await taskRes.json();
           setTasks(taskData);

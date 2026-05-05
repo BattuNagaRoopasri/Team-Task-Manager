@@ -9,7 +9,10 @@ const taskRoutes = require('./routes/tasks');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://teamtaskmanagerss.netlify.app',
+  credentials: true
+}));
 app.use(express.json());
 
 // API Routes
