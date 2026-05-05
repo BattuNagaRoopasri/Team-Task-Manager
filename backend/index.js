@@ -18,15 +18,14 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 
 // Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+app.get('/', (req, res) => {
+  res.send('🚀 Team Task Manager API is Live');
+});
 
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'))
-  );
-} else {
-  app.get('/', (req, res) => res.send('API is running...'));
-}
+// Health/API check
+app.get('/api', (req, res) => {
+  res.json({ message: 'API working perfectly' });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
