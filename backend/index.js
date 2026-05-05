@@ -10,8 +10,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: 'https://teamtaskmanagerss.netlify.app',
-  credentials: true
+  origin: 'https://teamtaskmanagerss.netlify.app'
 }));
 app.use(express.json());
 
