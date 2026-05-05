@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 
 const AuthContext = createContext();
+
 export const useAuth = () => useContext(AuthContext);
-const API = import.meta.env.VITE_API_URL;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -11,32 +11,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkUser = async () => {
       const token = localStorage.getItem('token');
-
       if (token) {
         try {
-          const res = await fetch(`${API}/api/auth/me`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+          const res = await fetch('https://adorable-caring-production-3038.up.railway.app/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` }
           });
-
           if (res.ok) {
             const data = await res.json();
             setUser(data);
           } else {
             localStorage.removeItem('token');
-            setUser(null);
           }
         } catch (error) {
           console.error('Auth check failed:', error);
           localStorage.removeItem('token');
-          setUser(null);
         }
       }
-
       setLoading(false);
     };
-
     checkUser();
   }, []);
 
