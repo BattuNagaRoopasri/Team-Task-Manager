@@ -26,7 +26,7 @@ const Login = () => {
         login({ id: data.id, name: data.name, email: data.email, role: data.role }, data.token);
         navigate('/dashboard');
       } else {
-        setError(data.message || 'Failed to login');
+        setError(data.error || data.message || 'Failed to login');
       }
     } catch (err) {
       setError('An error occurred. Please try again.');

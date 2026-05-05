@@ -27,7 +27,7 @@ const Signup = () => {
         // Automatically redirect to login after successful signup
         navigate('/login');
       } else {
-        setError(data.message || 'Failed to create account');
+        setError(data.error || data.message || 'Failed to create account');
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
