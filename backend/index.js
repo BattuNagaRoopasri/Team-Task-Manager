@@ -34,6 +34,18 @@ app.get('/api', (req, res) => {
   res.json({ message: 'API working perfectly' });
 });
 
+/* ✅ Database Setup Endpoint (Run this once) */
+app.get('/api/setup-db', (req, res) => {
+  const { exec } = require('child_process');
+  exec('npx --yes prisma db push --accept-data-loss', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return res.status(500).json({ message: 'Failed to push schema', error: error.message, stderr });
+    }
+    res.json({ message: 'Database schema pushed successfully!', stdout });
+  });
+});
+
 /* ❗ GLOBAL ERROR HANDLER (VERY IMPORTANT) */
 app.use((err, req, res, next) => {
   console.error('🔥 ERROR:', err.message);
