@@ -15,7 +15,7 @@ const Dashboard = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         // We fetch tasks, and projects can be fetched similarly
-        const taskRes = await fetch('https://team-task-manager-production-ad99.up.railway.app/api/auth/register', { headers });
+        const taskRes = await fetch('/api/tasks', { headers });
         if (taskRes.ok) {
           const taskData = await taskRes.json();
           setTasks(taskData);
@@ -34,13 +34,13 @@ const Dashboard = () => {
       const token = localStorage.getItem('token');
       const res = await fetch(`/api/tasks/${taskId}`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ status: newStatus })
       });
-      
+
       if (res.ok) {
         const updatedTask = await res.json();
         setTasks(tasks.map(t => t.id === taskId ? updatedTask : t));
@@ -85,10 +85,10 @@ const Dashboard = () => {
         {/* Task List Section */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
-            <CheckCircle2 size={20} style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }} /> 
+            <CheckCircle2 size={20} style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }} />
             {user.role === 'ADMIN' ? 'All Tasks' : 'My Tasks'}
           </h2>
-          
+
           {tasks.length === 0 ? (
             <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '2rem 0' }}>No tasks found.</p>
           ) : (
@@ -102,14 +102,14 @@ const Dashboard = () => {
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
                     Project: {task.project?.name} | Due: {new Date(task.dueDate).toLocaleDateString()}
                   </p>
-                  
+
                   <div className="flex justify-between items-center">
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                       {user.role === 'ADMIN' && `Assignee: ${task.assignedTo?.name || 'Unassigned'}`}
                     </div>
-                    
-                    <select 
-                      className="input-field" 
+
+                    <select
+                      className="input-field"
                       style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}
                       value={task.status}
                       onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
@@ -128,7 +128,7 @@ const Dashboard = () => {
         {/* Project Summary Section */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
-            <LayoutDashboard size={20} style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }} /> 
+            <LayoutDashboard size={20} style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }} />
             My Projects
           </h2>
           <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '2rem 0' }}>

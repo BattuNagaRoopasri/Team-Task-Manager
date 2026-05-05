@@ -14,7 +14,7 @@ const Login = () => {
     setError('');
 
     try {
-      const res = await fetch('https://team-task-manager-production-ad99.up.railway.app/api/auth/register', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
