@@ -15,7 +15,7 @@ const Dashboard = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         // We fetch tasks, and projects can be fetched similarly
-        const taskRes = await fetch('/api/tasks', { headers });
+        const taskRes = await fetch('https://team-task-manager-production-ad99.up.railway.app/api/auth/register', { headers });
         if (taskRes.ok) {
           const taskData = await taskRes.json();
           setTasks(taskData);

@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const res = await fetch('/api/auth/me', {
+          const res = await fetch('https://team-task-manager-production-ad99.up.railway.app/api/auth/register', {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (res.ok) {

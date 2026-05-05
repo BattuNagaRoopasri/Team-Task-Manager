@@ -13,16 +13,16 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('https://team-task-manager-production-ad99.up.railway.app/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, role })
       });
-      
+
       const data = await res.json();
-      
+
       if (res.ok) {
         // Automatically redirect to login after successful signup
         navigate('/login');
@@ -41,64 +41,64 @@ const Signup = () => {
           <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Create an Account</h2>
           <p style={{ color: 'var(--text-secondary)' }}>Join your team and start managing tasks</p>
         </div>
-        
+
         {error && <div style={{ padding: '0.75rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '0.5rem', marginBottom: '1rem', border: '1px solid rgba(239, 68, 68, 0.2)' }}>{error}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label htmlFor="name">Full Name</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               id="name"
-              className="input-field" 
+              className="input-field"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required 
+              required
               placeholder="John Doe"
             />
           </div>
           <div className="input-group">
             <label htmlFor="email">Email Address</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               id="email"
-              className="input-field" 
+              className="input-field"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required 
+              required
               placeholder="you@example.com"
             />
           </div>
           <div className="input-group">
             <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               id="password"
-              className="input-field" 
+              className="input-field"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required 
+              required
               placeholder="••••••••"
               minLength="6"
             />
           </div>
           <div className="input-group">
-             <label htmlFor="role">Role</label>
-             <select 
-               id="role"
-               className="input-field"
-               value={role}
-               onChange={(e) => setRole(e.target.value)}
-             >
-               <option value="MEMBER">Member (Join Teams)</option>
-               <option value="ADMIN">Admin (Manage Projects)</option>
-             </select>
+            <label htmlFor="role">Role</label>
+            <select
+              id="role"
+              className="input-field"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="MEMBER">Member (Join Teams)</option>
+              <option value="ADMIN">Admin (Manage Projects)</option>
+            </select>
           </div>
           <button type="submit" className="btn btn-primary w-full" style={{ marginTop: '1rem' }}>
             Create Account
           </button>
         </form>
-        
+
         <p className="text-center mt-4" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
           Already have an account? <Link to="/login" style={{ fontWeight: '500' }}>Sign in</Link>
         </p>
