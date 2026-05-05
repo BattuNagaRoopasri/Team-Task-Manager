@@ -29,9 +29,14 @@ const Navbar = () => {
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{user.role}</span>
                  </div>
               </div>
-              <Link to="/dashboard" className="btn btn-secondary" style={{ padding: '0.5rem 1rem' }}>
-                <LayoutDashboard size={18} style={{ marginRight: '0.5rem' }} /> Dashboard
-              </Link>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <Link to="/dashboard" className="btn btn-secondary" style={{ padding: '0.5rem 1rem' }}>
+                  <LayoutDashboard size={18} style={{ marginRight: '0.5rem' }} /> Dashboard
+                </Link>
+                <Link to="/projects" className="btn btn-secondary" style={{ padding: '0.5rem 1rem' }}>
+                  Projects
+                </Link>
+              </div>
               <button onClick={handleLogout} className="btn btn-danger" style={{ padding: '0.5rem 1rem' }}>
                 <LogOut size={18} style={{ marginRight: '0.5rem' }} /> Logout
               </button>

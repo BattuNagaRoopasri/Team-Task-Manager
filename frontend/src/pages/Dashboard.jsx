@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { PlusCircle, Clock, CheckCircle2, AlertCircle, LayoutDashboard } from 'lucide-react';
+import { PlusCircle, CheckCircle2, LayoutDashboard, Users, Calendar } from 'lucide-react';
+import CreateProjectModal from '../components/CreateProjectModal';
+import CreateTaskModal from '../components/CreateTaskModal';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const [projects, setProjects] = [useState([]), useState([])][0]; // To be replaced with proper state
+  const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Modal states
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,12 +21,20 @@ const Dashboard = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
 
-        // We fetch tasks, and projects can be fetched similarly
+        // Fetch Tasks
         const taskRes = await fetch('https://adorable-caring-production-3038.up.railway.app/api/tasks', { headers });
         if (taskRes.ok) {
           const taskData = await taskRes.json();
           setTasks(taskData);
         }
+
+        // Fetch Projects
+        const projRes = await fetch('https://adorable-caring-production-3038.up.railway.app/api/projects', { headers });
+        if (projRes.ok) {
+          const projData = await projRes.json();
+          setProjects(projData);
+        }
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -32,7 +47,7 @@ const Dashboard = () => {
   const handleStatusUpdate = async (taskId, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/tasks/${taskId}`, {
+      const res = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -60,28 +75,28 @@ const Dashboard = () => {
     }
   };
 
-  if (loading) return <div className="text-center mt-4">Loading dashboard...</div>;
+  if (loading) return <div className="text-center mt-8">Loading dashboard...</div>;
 
   return (
     <div className="animate-fade-in">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-6">
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Dashboard</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Welcome back, {user.name}!</p>
         </div>
         {user.role === 'ADMIN' && (
           <div className="flex gap-2">
-            <button className="btn btn-primary" onClick={() => alert('Project creation to be implemented')}>
+            <button className="btn btn-primary" onClick={() => setIsProjectModalOpen(true)}>
               <PlusCircle size={18} style={{ marginRight: '0.5rem' }} /> New Project
             </button>
-            <button className="btn btn-secondary" onClick={() => alert('Task creation to be implemented')}>
+            <button className="btn btn-secondary" onClick={() => setIsTaskModalOpen(true)}>
               <PlusCircle size={18} style={{ marginRight: '0.5rem' }} /> New Task
             </button>
           </div>
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
         {/* Task List Section */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
@@ -100,7 +115,7 @@ const Dashboard = () => {
                     {getStatusBadge(task.status)}
                   </div>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                    Project: {task.project?.name} | Due: {new Date(task.dueDate).toLocaleDateString()}
+                    Project: <span style={{ color: 'var(--text-primary)' }}>{task.project?.name}</span> | Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date set'}
                   </p>
 
                   <div className="flex justify-between items-center">
@@ -108,16 +123,18 @@ const Dashboard = () => {
                       {user.role === 'ADMIN' && `Assignee: ${task.assignedTo?.name || 'Unassigned'}`}
                     </div>
 
-                    <select
-                      className="input-field"
-                      style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}
-                      value={task.status}
-                      onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
-                    >
-                      <option value="TODO">To Do</option>
-                      <option value="IN_PROGRESS">In Progress</option>
-                      <option value="DONE">Done</option>
-                    </select>
+                    {(user.role === 'ADMIN' || task.assignedToId === user.id) && (
+                      <select
+                        className="input-field"
+                        style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}
+                        value={task.status}
+                        onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
+                      >
+                        <option value="TODO">To Do</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="DONE">Done</option>
+                      </select>
+                    )}
                   </div>
                 </div>
               ))}
@@ -126,16 +143,50 @@ const Dashboard = () => {
         </div>
 
         {/* Project Summary Section */}
-        <div className="glass-panel" style={{ padding: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
-            <LayoutDashboard size={20} style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }} />
-            My Projects
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '2rem 0' }}>
-            Project view is active. Connect to database to see live projects.
-          </p>
+        <div className="glass-panel" style={{ padding: '1.5rem', height: 'fit-content' }}>
+          <div className="flex justify-between items-center mb-4">
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+              <LayoutDashboard size={20} style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }} />
+              My Projects
+            </h2>
+            <Link to="/projects" style={{ fontSize: '0.875rem', fontWeight: '500' }}>View All</Link>
+          </div>
+
+          {projects.length === 0 ? (
+             <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '2rem 0' }}>No projects found.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {projects.slice(0, 5).map(project => (
+                <Link to={`/projects/${project.id}`} key={project.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: 'rgba(15, 23, 42, 0.4)', borderRadius: '0.5rem', textDecoration: 'none', transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(15, 23, 42, 0.6)'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(15, 23, 42, 0.4)'}>
+                  <div>
+                    <h3 style={{ fontWeight: '500', fontSize: '1rem', color: 'var(--text-primary)', margin: 0 }}>{project.name}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.25rem' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <Users size={12} /> {project.members?.length || 0}
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <Calendar size={12} /> {new Date(project.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      <CreateProjectModal 
+        isOpen={isProjectModalOpen} 
+        onClose={() => setIsProjectModalOpen(false)} 
+        onProjectCreated={(newProj) => setProjects([...projects, newProj])}
+      />
+      <CreateTaskModal 
+        isOpen={isTaskModalOpen} 
+        onClose={() => setIsTaskModalOpen(false)} 
+        onTaskCreated={(newTask) => setTasks([...tasks, newTask])}
+        currentProjects={projects}
+      />
     </div>
   );
 };
