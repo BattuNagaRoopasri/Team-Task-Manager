@@ -15,7 +15,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
       const fetchUsers = async () => {
         try {
           const token = localStorage.getItem('token');
-          const res = await fetch('https://adorable-caring-production-3038.up.railway.app/api/auth/users', {
+          const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/auth/users', {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (res.ok) {
@@ -40,7 +40,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('https://adorable-caring-production-3038.up.railway.app/api/projects', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

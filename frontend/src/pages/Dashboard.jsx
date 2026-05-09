@@ -22,14 +22,14 @@ const Dashboard = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         // Fetch Tasks
-        const taskRes = await fetch('https://adorable-caring-production-3038.up.railway.app/api/tasks', { headers });
+        const taskRes = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/tasks', { headers });
         if (taskRes.ok) {
           const taskData = await taskRes.json();
           setTasks(taskData);
         }
 
         // Fetch Projects
-        const projRes = await fetch('https://adorable-caring-production-3038.up.railway.app/api/projects', { headers });
+        const projRes = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/projects', { headers });
         if (projRes.ok) {
           const projData = await projRes.json();
           setProjects(projData);
@@ -47,7 +47,7 @@ const Dashboard = () => {
   const handleStatusUpdate = async (taskId, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/tasks/${taskId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -246,6 +246,7 @@ const Dashboard = () => {
                       </span>
                     </div>
                   </div>
+                  <div style={{ fontSize: '0.875rem', color: 'var(--primary-color)', fontWeight: '500' }}>View Details &rarr;</div>
                 </Link>
               ))}
             </div>

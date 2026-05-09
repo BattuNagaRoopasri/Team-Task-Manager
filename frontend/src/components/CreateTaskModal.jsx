@@ -24,7 +24,7 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, currentProjects }) =>
         const fetchProjects = async () => {
           try {
             const token = localStorage.getItem('token');
-            const res = await fetch('https://adorable-caring-production-3038.up.railway.app/api/projects', {
+            const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/projects', {
               headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -74,7 +74,7 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, currentProjects }) =>
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('https://adorable-caring-production-3038.up.railway.app/api/tasks', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/tasks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

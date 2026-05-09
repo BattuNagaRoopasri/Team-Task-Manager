@@ -13,7 +13,7 @@ const Projects = () => {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('https://adorable-caring-production-3038.up.railway.app/api/projects', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/projects', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -79,13 +79,18 @@ const Projects = () => {
                 </p>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid var(--border-color)', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <Users size={16} />
-                    <span>{project.members?.length || 0} members</span>
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Users size={16} />
+                      <span>{project.members?.length || 0} members</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Calendar size={16} />
+                      <span>{new Date(project.createdAt).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <Calendar size={16} />
-                    <span>{new Date(project.createdAt).toLocaleDateString()}</span>
+                  <div style={{ color: 'var(--primary-color)', fontWeight: '600' }}>
+                    View Details &rarr;
                   </div>
                 </div>
               </div>
