@@ -12,33 +12,28 @@ dotenv.config();
 
 const app = express();
 
-/* ✅ CORS FIX (important) */
 app.use(cors({
-  origin: 'https://teamtaskmanagerss.netlify.app',
+  origin: ['https://teamtaskmanagerss.netlify.app', 'http://localhost:5173', 'http://localhost:5174'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
 
 app.use(express.json());
 
-/* ✅ API Routes */
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/timesheets', timesheetRoutes);
 app.use('/api/invoices', invoiceRoutes);
 
-/* ✅ Root route */
 app.get('/', (req, res) => {
   res.send('🚀 Team Task Manager API is Live');
 });
 
-/* ✅ Health check */
 app.get('/api', (req, res) => {
   res.json({ message: 'API working perfectly' });
 });
 
-/* ✅ Database Setup Endpoint (Run this once) */
 app.get('/api/setup-db', (req, res) => {
   const { exec } = require('child_process');
   exec('npx --yes prisma db push --accept-data-loss', (error, stdout, stderr) => {
@@ -50,7 +45,6 @@ app.get('/api/setup-db', (req, res) => {
   });
 });
 
-/* ❗ GLOBAL ERROR HANDLER (VERY IMPORTANT) */
 app.use((err, req, res, next) => {
   console.error('🔥 ERROR:', err.message);
   res.status(500).json({
@@ -59,7 +53,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-/* ✅ PORT */
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

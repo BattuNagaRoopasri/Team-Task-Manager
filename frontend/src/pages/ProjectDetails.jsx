@@ -97,8 +97,14 @@ const ProjectDetails = () => {
         const msg = await res.json();
         setMessages([...messages, msg]);
         setNewMessage('');
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(`Failed to send message: ${err.message || 'Server error'}`);
       }
-    } catch (error) { console.error(error); }
+    } catch (error) { 
+      console.error(error); 
+      alert("Network error: Could not connect to the server.");
+    }
   };
 
   const handleLogTime = async (e) => {
@@ -115,8 +121,14 @@ const ProjectDetails = () => {
         const log = await res.json();
         setTimeLogs([log, ...timeLogs]);
         setNewTimeLog({ hours: '', date: new Date().toISOString().split('T')[0], description: '' });
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(`Failed to log time: ${err.message || 'Server error'}`);
       }
-    } catch (error) { console.error(error); }
+    } catch (error) { 
+      console.error(error); 
+      alert("Network error: Could not connect to the server.");
+    }
   };
 
   const handleApproveTime = async (logId, status) => {
