@@ -13,7 +13,7 @@ const Projects = () => {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/projects', {
+      const res = await fetch('https://adorable-caring-production-3038.up.railway.app/api/projects', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {

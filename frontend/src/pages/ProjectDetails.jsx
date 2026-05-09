@@ -26,7 +26,7 @@ const ProjectDetails = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
 
-        const res = await fetch(`http://localhost:5000/api/projects/${id}`, { headers });
+        const res = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/projects/${id}`, { headers });
         
         if (res.ok) {
           const data = await res.json();
@@ -34,19 +34,19 @@ const ProjectDetails = () => {
           
           // Fetch messages
           try {
-            const msgRes = await fetch(`http://localhost:5000/api/projects/${id}/messages`, { headers });
+            const msgRes = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/projects/${id}/messages`, { headers });
             if (msgRes.ok) setMessages(await msgRes.json());
           } catch (e) {}
 
           // Fetch timesheets
           try {
-            const timeRes = await fetch(`http://localhost:5000/api/timesheets/project/${id}`, { headers });
+            const timeRes = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/timesheets/project/${id}`, { headers });
             if (timeRes.ok) setTimeLogs(await timeRes.json());
           } catch (e) {}
 
           // Fetch invoices
           try {
-            const invRes = await fetch(`http://localhost:5000/api/invoices/project/${id}`, { headers });
+            const invRes = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/invoices/project/${id}`, { headers });
             if (invRes.ok) setInvoices(await invRes.json());
           } catch (e) {}
 
@@ -67,7 +67,7 @@ const ProjectDetails = () => {
   const handleStatusUpdate = async (taskId, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+      const res = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: newStatus })
@@ -88,7 +88,7 @@ const ProjectDetails = () => {
     if (!newMessage.trim()) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/projects/${id}/messages`, {
+      const res = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/projects/${id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ content: newMessage })
@@ -97,14 +97,8 @@ const ProjectDetails = () => {
         const msg = await res.json();
         setMessages([...messages, msg]);
         setNewMessage('');
-      } else {
-        const err = await res.json().catch(() => ({}));
-        alert(`Failed to send message: ${err.message || 'Server error'}`);
       }
-    } catch (error) { 
-      console.error(error); 
-      alert("Network error: Could not connect to the server.");
-    }
+    } catch (error) { console.error(error); }
   };
 
   const handleLogTime = async (e) => {
@@ -112,7 +106,7 @@ const ProjectDetails = () => {
     if (!newTimeLog.hours || !newTimeLog.date) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/timesheets`, {
+      const res = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/timesheets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ ...newTimeLog, isBillable: true, projectId: id })
@@ -121,20 +115,14 @@ const ProjectDetails = () => {
         const log = await res.json();
         setTimeLogs([log, ...timeLogs]);
         setNewTimeLog({ hours: '', date: new Date().toISOString().split('T')[0], description: '' });
-      } else {
-        const err = await res.json().catch(() => ({}));
-        alert(`Failed to log time: ${err.message || 'Server error'}`);
       }
-    } catch (error) { 
-      console.error(error); 
-      alert("Network error: Could not connect to the server.");
-    }
+    } catch (error) { console.error(error); }
   };
 
   const handleApproveTime = async (logId, status) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/timesheets/${logId}/status`, {
+      const res = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/timesheets/${logId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status })
@@ -149,7 +137,7 @@ const ProjectDetails = () => {
   const handleGenerateInvoice = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/invoices/generate`, {
+      const res = await fetch(`https://adorable-caring-production-3038.up.railway.app/api/invoices/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ projectId: id, hourlyRate: 50 }) // Fixed rate for now
