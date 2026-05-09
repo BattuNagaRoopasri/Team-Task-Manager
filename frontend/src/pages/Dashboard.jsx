@@ -96,50 +96,127 @@ const Dashboard = () => {
         )}
       </div>
 
+      {/* Overview Statistics */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+        <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ padding: '1rem', borderRadius: '50%', backgroundColor: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>
+            <LayoutDashboard size={24} />
+          </div>
+          <div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Total Projects</p>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{projects.length}</h3>
+          </div>
+        </div>
+        <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ padding: '1rem', borderRadius: '50%', backgroundColor: 'rgba(168, 85, 247, 0.1)', color: '#a855f7' }}>
+            <CheckCircle2 size={24} />
+          </div>
+          <div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Total Tasks</p>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{tasks.length}</h3>
+          </div>
+        </div>
+        <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ padding: '1rem', borderRadius: '50%', backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>
+            <CheckCircle2 size={24} />
+          </div>
+          <div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Completed Tasks</p>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{tasks.filter(t => t.status === 'DONE').length}</h3>
+          </div>
+        </div>
+      </div>
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
         {/* Task List Section */}
-        <div className="glass-panel" style={{ padding: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
-            <CheckCircle2 size={20} style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }} />
-            {user.role === 'ADMIN' ? 'All Tasks' : 'My Tasks'}
-          </h2>
+        <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+              <CheckCircle2 size={20} style={{ marginRight: '0.5rem', color: 'var(--primary-color)' }} />
+              {user.role === 'ADMIN' ? 'Active Tasks' : 'My Active Tasks'}
+            </h2>
 
-          {tasks.length === 0 ? (
-            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '2rem 0' }}>No tasks found.</p>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {tasks.map(task => (
-                <div key={task.id} style={{ padding: '1rem', backgroundColor: 'rgba(15, 23, 42, 0.4)', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}>
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 style={{ fontWeight: '600', fontSize: '1rem' }}>{task.title}</h3>
-                    {getStatusBadge(task.status)}
-                  </div>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                    Project: <span style={{ color: 'var(--text-primary)' }}>{task.project?.name}</span> | Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date set'}
-                  </p>
-
-                  <div className="flex justify-between items-center">
-                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                      {user.role === 'ADMIN' && `Assignee: ${task.assignedTo?.name || 'Unassigned'}`}
+            {tasks.filter(t => t.status !== 'DONE').length === 0 ? (
+              <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '1rem 0' }}>No active tasks found.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {tasks.filter(t => t.status !== 'DONE').map(task => (
+                  <div key={task.id} style={{ padding: '1rem', backgroundColor: 'rgba(15, 23, 42, 0.4)', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 style={{ fontWeight: '600', fontSize: '1rem' }}>{task.title}</h3>
+                      {getStatusBadge(task.status)}
                     </div>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                      Project: <span style={{ color: 'var(--text-primary)' }}>{task.project?.name}</span> | Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date set'}
+                    </p>
 
-                    {(user.role === 'ADMIN' || task.assignedToId === user.id) && (
-                      <select
-                        className="input-field"
-                        style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}
-                        value={task.status}
-                        onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
-                      >
-                        <option value="TODO">To Do</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="DONE">Done</option>
-                      </select>
-                    )}
+                    <div className="flex justify-between items-center">
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                        {user.role === 'ADMIN' && `Assignee: ${task.assignedTo?.name || 'Unassigned'}`}
+                      </div>
+
+                      {(user.role === 'ADMIN' || task.assignedToId === user.id) && (
+                        <select
+                          className="input-field"
+                          style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}
+                          value={task.status}
+                          onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
+                        >
+                          <option value="TODO">To Do</option>
+                          <option value="IN_PROGRESS">In Progress</option>
+                          <option value="DONE">Done</option>
+                        </select>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
+          
+          <div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+              <CheckCircle2 size={20} style={{ marginRight: '0.5rem', color: '#22c55e' }} />
+              Completed Tasks
+            </h2>
+
+            {tasks.filter(t => t.status === 'DONE').length === 0 ? (
+              <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '1rem 0' }}>No completed tasks.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {tasks.filter(t => t.status === 'DONE').map(task => (
+                  <div key={task.id} style={{ padding: '1rem', backgroundColor: 'rgba(34, 197, 94, 0.05)', borderRadius: '0.5rem', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 style={{ fontWeight: '600', fontSize: '1rem', textDecoration: 'line-through', color: 'var(--text-secondary)' }}>{task.title}</h3>
+                      {getStatusBadge(task.status)}
+                    </div>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                      Project: <span style={{ color: 'var(--text-primary)' }}>{task.project?.name}</span>
+                    </p>
+
+                    <div className="flex justify-between items-center">
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                        {user.role === 'ADMIN' && `Assignee: ${task.assignedTo?.name || 'Unassigned'}`}
+                      </div>
+
+                      {(user.role === 'ADMIN' || task.assignedToId === user.id) && (
+                        <select
+                          className="input-field"
+                          style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}
+                          value={task.status}
+                          onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
+                        >
+                          <option value="TODO">To Do</option>
+                          <option value="IN_PROGRESS">In Progress</option>
+                          <option value="DONE">Done</option>
+                        </select>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Project Summary Section */}

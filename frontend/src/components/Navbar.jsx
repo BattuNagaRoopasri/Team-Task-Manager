@@ -14,8 +14,9 @@ const Navbar = () => {
   return (
     <nav style={{ padding: '1rem 0', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--surface-color)' }}>
       <div className="container flex justify-between items-center">
-        <Link to="/" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-          Team<span style={{ color: 'var(--primary-color)' }}>Task</span>
+        <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
+          <LayoutDashboard size={24} style={{ color: 'var(--primary-color)' }} />
+          Nexus<span style={{ color: 'var(--primary-color)' }}>Wave</span>
         </Link>
         <div className="flex items-center gap-4">
           {user ? (
