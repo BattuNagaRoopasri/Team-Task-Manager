@@ -98,4 +98,64 @@ router.put('/:id/members', protect, admin, async (req, res) => {
   }
 });
 
+// Get Messages for a Project
+router.get('/:id/messages', protect, async (req, res) => {
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id: req.params.id },
+      include: { members: true },
+    });
+
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+
+    // Access check
+    if (req.user.role !== 'ADMIN' && !project.members.some(m => m.id === req.user.userId)) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const messages = await prisma.message.findMany({
+      where: { projectId: req.params.id },
+      include: { sender: { select: { name: true, role: true } } },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    res.json(messages);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Post a Message to a Project
+router.post('/:id/messages', protect, async (req, res) => {
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id: req.params.id },
+      include: { members: true },
+    });
+
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+
+    // Access check
+    if (req.user.role !== 'ADMIN' && !project.members.some(m => m.id === req.user.userId)) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const { content } = req.body;
+    if (!content) return res.status(400).json({ message: 'Message content required' });
+
+    const message = await prisma.message.create({
+      data: {
+        content,
+        projectId: req.params.id,
+        senderId: req.user.userId,
+      },
+      include: { sender: { select: { name: true, role: true } } },
+    });
+
+    res.status(201).json(message);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 module.exports = router;
